@@ -1,15 +1,109 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" onclick={handleClearSelection}>
     <header class="header">Available Bikes for {name}</header>
     <section class="content">
       <div class="columns">
         <main class="main" >
-          <c-list onproductselected={handleProductSelected}></c-list>
+          <c-list products={products} onproductselected={handleProductSelected}></c-list>
         </main>
         <aside class="sidebar-second">
           <c-detail product-id={selectedProductId}></c-detail>
         </aside>
       </div>
+    </section>
+    <section class="recommendations">
+      <div class="recommendations-header">推荐商品</div>
+      <div class="recommendations-grid">
+        <template for:each={recommendedBikes} for:item="bike">
+          <c-tile
+            key={bike.Id}
+            product={bike}
+            ontileclick={handleProductSelected}
+          ></c-tile>
+        </template>
+      </div>
+    </section>
+    <section class="create-product-section">
+      <button class="create-button" onclick={toggleCreateForm}>
+        {isCreating ? '取消' : '新建商品'}
+      </button>
+      <template if:true={isCreating}>
+        <div class="form-container">
+          <h3>新建自行车商品</h3>
+          <div class="form-group">
+            <label>商品名称 *</label>
+            <input
+              type="text"
+              data-field="name"
+              value={formData.name}
+              onchange={handleFormInputChange}
+              placeholder="例：DYNAMO X1"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>类别 *</label>
+              <select data-field="category" value={formData.category} onchange={handleFormInputChange}>
+                <option value="Mountain">Mountain</option>
+                <option value="Commuter">Commuter</option>
+                <option value="Road">Road</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>级别 *</label>
+              <select data-field="level" value={formData.level} onchange={handleFormInputChange}>
+                <option value="Beginner">Beginner</option>
+                <option value="Enthusiast">Enthusiast</option>
+                <option value="Racer">Racer</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>材料 *</label>
+              <select data-field="material" value={formData.material} onchange={handleFormInputChange}>
+                <option value="Aluminum">Aluminum</option>
+                <option value="Carbon">Carbon</option>
+                <option value="Steel">Steel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>价格 (CNY) *</label>
+              <input
+                type="number"
+                data-field="msrp"
+                value={formData.msrp}
+                onchange={handleFormInputChange}
+                placeholder="例：5000"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>描述</label>
+            <textarea
+              data-field="description"
+              value={formData.description}
+              onchange={handleFormInputChange}
+              placeholder="商品描述"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>图片URL</label>
+            <input
+              type="text"
+              data-field="pictureUrl"
+              value={formData.pictureUrl}
+              onchange={handleFormInputChange}
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+          <button class="submit-button" onclick={handleSubmitProduct}>
+            提交新商品
+          </button>
+        </div>
+      </template>
     </section>
   </div>
 </template>

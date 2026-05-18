@@ -1,20 +1,128 @@
 <template>
-    <template if:true={product}>
-        <div class="container">
-            <div class="slds-text-heading_small">{product.fields.Name.value}</div>
-            <div class="price">{product.fields.MSRP__c.displayValue}</div>
-            <div class="description">{product.fields.Description__c.value}</div>
-            <img class="product-img" src={product.fields.Picture_URL__c.value}></img>
-            <p>
-                <lightning-badge label={product.fields.Material__c.value}></lightning-badge>
-                <lightning-badge label={product.fields.Level__c.value}></lightning-badge>
-            </p>
-            <p>
-                <lightning-badge label={product.fields.Category__c.value}></lightning-badge>
-            </p>
-        </div>
+    <template if:true={hasProduct}>
+        <template if:false={isEditing}>
+            <div class="container" onclick={handleDetailClick}>
+                <div class="header-section">
+                    <div class="slds-text-heading_small">{productData.Name}</div>
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick={handleEditClick}>编辑</button>
+                        <button class="delete-btn" onclick={handleDeleteClick}>删除</button>
+                    </div>
+                </div>
+                <div class="price">{productData.MSRP__c}</div>
+                <div class="description">{productData.Description__c}</div>
+                <img class="product-img" src={productData.Picture_URL__c}></img>
+                <p>
+                    <lightning-badge label={productData.Material__c}></lightning-badge>
+                    <lightning-badge label={productData.Level__c}></lightning-badge>
+                </p>
+                <p>
+                    <lightning-badge label={productData.Category__c}></lightning-badge>
+                </p>
+            </div>
+        </template>
+        <template if:true={isEditing}>
+            <div class="container" onclick={handleDetailClick}>
+                <div class="slds-text-heading_small">编辑商品</div>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>商品名称</label>
+                        <input
+                            type="text"
+                            data-field="Name"
+                            value={editFormData.Name}
+                            onchange={handleEditFormChange}
+                        />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>类别</label>
+                            <select data-field="Category__c" value={editFormData.Category__c} onchange={handleEditFormChange}>
+                                <option value="Mountain">Mountain</option>
+                                <option value="Commuter">Commuter</option>
+                                <option value="Road">Road</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>级别</label>
+                            <select data-field="Level__c" value={editFormData.Level__c} onchange={handleEditFormChange}>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Enthusiast">Enthusiast</option>
+                                <option value="Racer">Racer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>材料</label>
+                            <select data-field="Material__c" value={editFormData.Material__c} onchange={handleEditFormChange}>
+                                <option value="Aluminum">Aluminum</option>
+                                <option value="Carbon">Carbon</option>
+                                <option value="Steel">Steel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>价格 (CNY)</label>
+                            <input
+                                type="number"
+                                data-field="MSRP__c"
+                                value={editFormData.MSRP__c}
+                                onchange={handleEditFormChange}
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>描述</label>
+                        <textarea
+                            data-field="Description__c"
+                            value={editFormData.Description__c}
+                            onchange={handleEditFormChange}
+                            rows="3"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>图片URL</label>
+                        <input
+                            type="text"
+                            data-field="Picture_URL__c"
+                            value={editFormData.Picture_URL__c}
+                            onchange={handleEditFormChange}
+                        />
+                    </div>
+                    <div class="button-group">
+                        <button class="save-btn" onclick={handleSaveEdit}>保存</button>
+                        <button class="cancel-btn" onclick={handleCancelEdit}>取消</button>
+                    </div>
+                </div>
+            </div>
+        </template>
     </template>
-    <template if:false={product}>
+    <template if:false={hasProduct}>
         <div class="slds-text-heading_medium">Select a bike</div>
+    </template>
+    <!-- 确认弹窗 -->
+    <template if:true={showConfirmModal}>
+        <div class="modal-overlay" onclick={handleCancel}>
+            <div class="modal-dialog" onclick={handleDetailClick}>
+                <div class="modal-header">
+                    <h2>{confirmTitle}</h2>
+                </div>
+                <div class="modal-body">
+                    <template if:true={isDeleteConfirm}>
+                        <p>你确定要删除商品 <strong>{productData.Name}</strong> 吗？此操作无法撤销。</p>
+                    </template>
+                    <template if:false={isDeleteConfirm}>
+                        <p>你确定要保存修改到商品 <strong>{productData.Name}</strong> 吗？</p>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel-btn" onclick={handleCancel}>取消</button>
+                    <button class="confirm-btn" onclick={handleConfirm}>
+                        {confirmButtonLabel}
+                    </button>
+                </div>
+            </div>
+        </div>
     </template>
 </template>

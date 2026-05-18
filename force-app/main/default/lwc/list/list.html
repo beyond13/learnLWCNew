@@ -1,8 +1,8 @@
 <template>
     <div class="container">
-        <template for:each={bikes} for:item="bike">
+        <template for:each={products} for:item="bike">
             <c-tile 
-                key={bike.fields.Id.value} 
+                key={bike.Id} 
                 product={bike} 
                 ontileclick={handleTileClick}>
             </c-tile>
