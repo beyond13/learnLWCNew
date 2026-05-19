@@ -1,11 +1,17 @@
-body {
-  margin: 0;
-} 
+:host {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+}
+
 .wrapper{
-  min-height: 100vh;
+  min-height: 0;
+  height: 100%;
   background: #ccc;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: auto;
 }
 .header, .footer{
   height: 50px;
@@ -23,6 +29,9 @@ body {
 .columns{
   display: flex;
   flex:1;
+}
+.columns, .main, .sidebar-first, .sidebar-second {
+  min-height: 0; /* allow flex children to shrink and avoid forcing page scroll */
 }
 .main{
   flex: 1.5;
@@ -52,6 +61,13 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+/* Ensure images inside the component never force horizontal scroll */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .create-product-section {

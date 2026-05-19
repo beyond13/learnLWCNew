@@ -2,7 +2,9 @@
     <div class="container">
         <a onclick={tileClick}>
             <div class="title">{product.Name}</div>
-            <img class="product-img" src={product.Picture_URL__c}></img>
+            <div class="image-wrap">
+                <img class="product-img" src={product.Picture_URL__c} alt={product.Name} />
+            </div>
         </a>
     </div>
 </template>
